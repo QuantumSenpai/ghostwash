@@ -1,0 +1,10 @@
+models/*
+!models/.gitkeep
+data/uploads/*
+data/outputs/*
+!data/*/.gitkeep
+.env
+__pycache__/
+.venv/
+node_modules/
+.next/

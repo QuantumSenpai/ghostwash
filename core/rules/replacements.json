@@ -1,0 +1,91 @@
+[
+  {
+    "p": "\\bdelve into\\b",
+    "r": "dig into"
+  },
+  {
+    "p": "\\bdelves into\\b",
+    "r": "digs into"
+  },
+  {
+    "p": "\\bdelving into\\b",
+    "r": "digging into"
+  },
+  {
+    "p": "\\bdelved into\\b",
+    "r": "dug into"
+  },
+  {
+    "p": "\\butilize\\b",
+    "r": "use"
+  },
+  {
+    "p": "\\butilizes\\b",
+    "r": "uses"
+  },
+  {
+    "p": "\\butilized\\b",
+    "r": "used"
+  },
+  {
+    "p": "\\butilizing\\b",
+    "r": "using"
+  },
+  {
+    "p": "\\bseamlessly\\b",
+    "r": "smoothly"
+  },
+  {
+    "p": "\\bseamless\\b",
+    "r": "smooth"
+  },
+  {
+    "p": "\\bin order to\\b",
+    "r": "to"
+  },
+  {
+    "p": "\\bdue to the fact that\\b",
+    "r": "because"
+  },
+  {
+    "p": "\\ba wide range of\\b",
+    "r": "many"
+  },
+  {
+    "p": "\\ba testament to\\b",
+    "r": "proof of"
+  },
+  {
+    "p": "\\bfurthermore\\b",
+    "r": "also"
+  },
+  {
+    "p": "\\bmoreover\\b",
+    "r": "also"
+  },
+  {
+    "p": "\\badditionally\\b",
+    "r": "also"
+  },
+  {
+    "p": "\\bin conclusion\\b",
+    "r": "overall"
+  },
+  {
+    "p": "\\bnavigate the complexities of\\b",
+    "r": "deal with"
+  },
+  {
+    "p": "\\bit(?:['’]s| is) (?:important to (?:note|remember|mention)|worth (?:noting|mentioning))(?: that)?,?",
+    "r": ""
+  },
+  {
+    "p": "\\bit should be noted that,?",
+    "r": ""
+  },
+  {
+    "p": "\\bin today['’]s (?:[a-z-]+ )?(?:world|age|landscape|era),?",
+    "r": "",
+    "start": true
+  }
+]

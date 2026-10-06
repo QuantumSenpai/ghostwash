@@ -1,0 +1,154 @@
+[
+  {
+    "p": "\\bdelv(?:e|es|ed|ing)\\b",
+    "w": 3
+  },
+  {
+    "p": "\\btapestry\\b",
+    "w": 3
+  },
+  {
+    "p": "\\btestament\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bpivotal\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bunderscor(?:e|es|ed|ing)\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bshowcas(?:e|es|ed|ing)\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bintricate\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bvibrant\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bmeticulous(?:ly)?\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bever-(?:evolving|changing)\\b",
+    "w": 3
+  },
+  {
+    "p": "\\bfast-paced\\b",
+    "w": 2
+  },
+  {
+    "p": "\\blandscape\\b",
+    "w": 1
+  },
+  {
+    "p": "\\bleverag(?:e|es|ed|ing)\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\butiliz(?:e|es|ed|ing)\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bfoster(?:s|ed|ing)?\\b",
+    "w": 1
+  },
+  {
+    "p": "\\brealm\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bembark(?:s|ed|ing)?\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bbeacon\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bseamless(?:ly)?\\b",
+    "w": 2
+  },
+  {
+    "p": "\\brobust\\b",
+    "w": 1
+  },
+  {
+    "p": "\\bholistic\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\belevat(?:e|es|ed|ing)\\b",
+    "w": 1
+  },
+  {
+    "p": "\\bharness(?:es|ed|ing)?\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bgame[- ]changer\\b",
+    "w": 2
+  },
+  {
+    "p": "\\bdeep dive\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bdiv(?:e|es|ed|ing) (?:deep )?into\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bunlock(?:s|ed|ing)? the (?:full )?potential\\b",
+    "w": 3
+  },
+  {
+    "p": "\\bnavigat(?:e|es|ed|ing) the complexities\\b",
+    "w": 3
+  },
+  {
+    "p": "\\bplays? a (?:crucial|vital|pivotal|key) role\\b",
+    "w": 2.5
+  },
+  {
+    "p": "\\bit(?:['’]s| is) (?:important to (?:note|remember|mention)|worth (?:noting|mentioning))(?: that)?",
+    "w": 3
+  },
+  {
+    "p": "\\bit should be noted that\\b",
+    "w": 3
+  },
+  {
+    "p": "\\bin today['’]s (?:[a-z-]+ )?(?:world|age|landscape|era)",
+    "w": 3
+  },
+  {
+    "p": "\\bin (?:conclusion|summary)\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\b(?:furthermore|moreover|additionally)\\b",
+    "w": 1
+  },
+  {
+    "p": "\\bin order to\\b",
+    "w": 0.5
+  },
+  {
+    "p": "\\ba wide range of\\b",
+    "w": 0.5
+  },
+  {
+    "p": "\\bas an ai(?: language model)?\\b",
+    "w": 5
+  },
+  {
+    "p": "\\bi hope this helps\\b",
+    "w": 2
+  }
+]
