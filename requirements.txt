@@ -1,3 +1,7 @@
 python-docx
 pdfplumber
 reportlab
+fastapi
+uvicorn
+python-multipart
+mlx-lm; sys_platform == "darwin"
