@@ -152,19 +152,38 @@ def test_new_flag_accepted_when_total_lower():
     assert out == TAPESTRY and fake.calls == 3
 
 
-def test_repair_starts_from_best_with_avoid_list():
+def test_repair_starts_from_best_with_fix_prompt():
     out, fake = run_table([TAPESTRY, TAPESTRY, TAPESTRY, GOOD])
     assert out == GOOD and fake.calls == 4
     assert fake.users[3] == TAPESTRY
-    assert "Do not use these words or phrases: tapestry." in fake.systems[3]
-    assert "Do not use these words or phrases" not in fake.systems[0]
+    assert "Phrases to replace: tapestry." in fake.systems[3]
+    assert "Phrases to replace" not in fake.systems[0]
+    assert "Edit only the listed phrases" in fake.systems[3]
+    assert "Do not use these words or phrases: tapestry." in fake.systems[1]
 
 
 def test_repair_is_checked_against_original():
     close = "It has a crucial role in 1,200 workflows overall."
-    short = "It serves 1,200 workflows well."
+    short = "It serves 1,200 workflows and teams well."
     out, fake = run_table([close, close, close, short, short])
     assert out == close and fake.calls == 5
+
+
+def test_repair_edit_must_stay_small():
+    shorter = "The tool helps in 1,200 workflows all the time."
+    out, fake = run_table([TAPESTRY, TAPESTRY, TAPESTRY, shorter, shorter])
+    assert out == TAPESTRY and fake.calls == 5
+
+
+def test_added_connector_rejected():
+    rejected("Overall, the tool matters in 1,200 workflows and we should dig into it.")
+    rejected("The tool matters. In summary, we should dig into 1,200 workflows now.")
+
+
+def test_existing_connector_allowed():
+    src = "Moreover, the tool plays a crucial role in 1,200 workflows and we must delve into it."
+    out, fake = run(["Moreover, the tool matters in 1,200 workflows and we should dig into it."], src)
+    assert out.startswith("Moreover, the tool matters") and fake.calls == 1
 
 
 if __name__ == "__main__":

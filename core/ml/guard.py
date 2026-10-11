@@ -9,6 +9,10 @@ _CHAT = re.compile(
     r"\s*(?:sure|certainly|of course|absolutely|here(?:'s| is| are)|as an ai|i'm sorry|i cannot)\b",
     re.I,
 )
+_LEAD = re.compile(
+    r"(?:^|[.!?]\s+)(?:overall|in (?:summary|conclusion)|to sum up|moreover|furthermore|additionally|ultimately)\b",
+    re.I,
+)
 _MARK = re.compile(r"⟦\d+⟧")
 _NUM = re.compile(r"\d+(?:[.,]\d+)*")
 _TOK = re.compile(r"[A-Za-z][\w'’-]*|[.!?\n]|⟦\d+⟧")
@@ -47,6 +51,8 @@ def reason(src, out, store, lo, hi):
         return "empty"
     if _CHAT.match(out) and not _CHAT.match(src):
         return "chatty opener"
+    if len(_LEAD.findall(out)) > len(_LEAD.findall(src)):
+        return "added connector"
     if not intact(out, store):
         return "lost marker"
     ratio = len(out) / max(len(src), 1)

@@ -12,9 +12,10 @@ from .recheck import refine, weight
 
 _DIR = Path(__file__).parent / "prompts"
 _LIMITS = {"light": (0.6, 1.4), "heavy": (0.5, 1.6)}
+_FIX_LIMITS = (0.75, 1.25)
 _TEMPS = (0.6, 0.8, 0.9)
 _TARGET = 0.3
-_AVOID_MAX = 12
+_LIST_MAX = 12
 _BREAK = re.compile(r"(?<=[.!?])\s+")
 
 
@@ -59,6 +60,10 @@ def _flag_texts(text, skip=()):
     )
 
 
+def _listed(words):
+    return ", ".join(list(words)[-_LIST_MAX:])
+
+
 def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
     kind = "heavy" if strength == "heavy" else "light"
     lo, hi = _LIMITS[kind]
@@ -72,17 +77,14 @@ def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
         base = {f.rule for f in detect(chunk)}
         avoid, log, made = {}, [], []
 
-        def attempt(src, temp, tag):
+        def attempt(src, temp, tag, prompt, limits):
             prot, store = protect(src)
-            prompt = system
-            if avoid:
-                prompt += "\n\nDo not use these words or phrases: " + ", ".join(list(avoid)[-_AVOID_MAX:]) + "."
             out = clean_output(
                 state["llm"].generate(prompt, prot, min(1024, max(128, len(src) // 2)), temp)
             )
             if "’" not in chunk:
                 out = out.replace("’", "'")
-            why = reason(prot, out, store, lo, hi)
+            why = reason(prot, out, store, *limits)
             cand = None if why else restore(out, store)
             why = why or reason(chunk, cand, [], lo, hi)
             if why:
@@ -95,14 +97,17 @@ def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
 
         def draft():
             for n, t in enumerate(draft_temps, 1):
-                c = attempt(chunk, t, f"try{n}")
+                prompt = system
+                if avoid:
+                    prompt += "\n\nDo not use these words or phrases: " + _listed(avoid) + "."
+                c = attempt(chunk, t, f"try{n}", prompt, (lo, hi))
                 if c is not None:
                     yield c
 
         def fix(src):
-            avoid.update(_flag_texts(src))
+            prompt = _prompt("rewrite_fix.txt") + "\n\nPhrases to replace: " + _listed(_flag_texts(src)) + "."
             for n, t in enumerate(fix_temps, 1):
-                c = attempt(src, t, f"fix{n}")
+                c = attempt(src, t, f"fix{n}", prompt, _FIX_LIMITS)
                 if c is not None:
                     yield c
 
