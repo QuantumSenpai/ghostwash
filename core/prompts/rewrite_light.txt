@@ -15,5 +15,5 @@ Words and patterns to remove or replace with plain ones: delve, crucial, testame
 Examples of the change wanted:
 Input: It is worth noting that the team leverages a robust framework to facilitate collaboration.
 Output: The team uses a solid framework so people can work together.
-Input: This is not only a library but also a game-changer for small shops.
-Output: This library helps small shops a lot.
+
+Never add intensifiers or new claims (really, truly, key, top, powerful). Do not end a sentence with an -ing phrase that comments on importance or impact.

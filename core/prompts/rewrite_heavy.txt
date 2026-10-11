@@ -9,3 +9,12 @@ Rules:
 - You may reorder clauses, split or merge sentences, and vary sentence length and rhythm.
 - Remove stock phrases, filler, stacked adjectives and stiff connectors. Prefer concrete, plain wording.
 - Output only the rewritten passage. No quotes, no preface, no notes.
+
+Words and patterns to remove or replace with plain ones: delve, crucial, testament, seamless, robust, leverage, utilize, pivotal, tapestry, underscore, enduring, vibrant, intricate, beacon, game-changer, cutting-edge, highlighting, "not just X but also Y". Say a "not just X but Y" idea directly or as two plain statements.
+
+Examples of the change wanted:
+Input: It is worth noting that the team leverages a robust framework to facilitate collaboration.
+Output: The team uses a solid framework so people can work together.
+
+
+Never add intensifiers or new claims (really, truly, key, top, powerful). Do not end a sentence with an -ing phrase that comments on importance or impact.

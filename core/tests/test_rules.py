@@ -13,11 +13,6 @@ def test_no_glued_comma_after_swap():
     assert not re.search(r"[A-Za-z],[a-z]", out), out
 
 
-def test_glue_guard_only_touches_sentence_openers():
-    assert apply_rules("Hello,world is fine") == "Hello, world is fine"
-    assert apply_rules("call f(a,b) now") == "call f(a,b) now"
-
-
 def test_article_agreement():
     out = apply_rules("This is a crucial step and a pivotal one.")
     assert "a important" not in out and "an important" in out, out
@@ -57,6 +52,11 @@ def test_swaps_basic():
 def test_idempotent_on_clean_text():
     t = "We use tools to build things."
     assert apply_rules(t) == t
+
+
+def test_not_just_comma_splice():
+    assert apply_rules("It's not just a tool, it's a game-changer for teams.") == "It's a tool and a game-changer for teams."
+    assert apply_rules("It is not only fast, it is also cheap.") == "It's fast and cheap."
 
 
 if __name__ == "__main__":

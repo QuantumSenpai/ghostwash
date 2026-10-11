@@ -198,5 +198,13 @@
   {
     "p": "\\bcutting[- ]edge\\b",
     "w": 1.5
+  },
+  {
+    "p": "\\bkey role\\b",
+    "w": 1
+  },
+  {
+    "p": "\\bplaying an? (?:\\w+ )?role\\b",
+    "w": 1.5
   }
 ]

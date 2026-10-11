@@ -63,6 +63,8 @@ def make_rewriter(strength="light", style=None, tries=3, llm=None):
         def candidates():
             for n, temp in enumerate(temps, 1):
                 out = clean_output(state["llm"].generate(system, prot, max_tokens, temp))
+                if "\u2019" not in chunk:
+                    out = out.replace("\u2019", "'")
                 why = reason(prot, out, store, lo, hi)
                 log.append(f"try{n}:{why or 'ok'}")
                 if not why:

@@ -13,7 +13,10 @@ _NOT_JUST = re.compile(
     r"(?<!\bdo )(?<!\bdoes )(?<!\bdid )\bnot (?:just|only|merely) (?!does |do |did |is |are |was |were |to )([^.;!?\n]{3,80}?),? but (also )?",
     re.I,
 )
-_GLUE = re.compile(r"(^|[.!?]\s+)([A-Z][a-z]+),(?=[a-z])", re.M)
+_SPLICE = re.compile(
+    r"\b(it)(?:['\u2019]s| is) not (?:just|only|merely) ([^,.;!?\n]{3,60}?), it(?:['\u2019]s| is) (?:also )?",
+    re.I,
+)
 
 
 def _case(src, dst):
@@ -57,11 +60,15 @@ def soften_dashes(text, per_words=250):
     return _DASH.sub(sub, text)
 
 
+def _splice(m):
+    return m.group(1) + "'s " + m.group(2) + " and "
+
+
 def apply_rules(text):
+    text = _SPLICE.sub(_splice, text)
     text = _NOT_JUST.sub(_not_just, text)
     for rx, r in _SWAPS:
         text = rx.sub(lambda m, r=r: _case(m.group(), r), text)
     for rx, start_only in _DROPS:
         text = rx.sub(_drop(start_only), text)
-    text = _GLUE.sub(r"\1\2, ", text)
     return soften_dashes(text)
