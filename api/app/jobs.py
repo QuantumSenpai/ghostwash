@@ -1,3 +1,4 @@
+import re
 import queue
 import threading
 import time
@@ -70,7 +71,10 @@ def _rewriter(job):
         return None
     from core.rewrite import make_rewriter
 
-    style = load_style(str(config.STYLES / f"{job.style}.txt")) if job.style else None
+    style = None
+    if job.style and re.fullmatch(r"[A-Za-z0-9_-]+", job.style):
+        sp = config.STYLES / f"{job.style}.txt"
+        style = load_style(str(sp)) if sp.is_file() else None
     return make_rewriter(strength=job.strength, style=style)
 
 
