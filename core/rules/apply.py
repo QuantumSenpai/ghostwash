@@ -9,6 +9,11 @@ _DROPS = tuple(
 )
 _DASH = re.compile("\\s*\u2014\\s*")
 _WORDS = re.compile(r"\w+")
+_NOT_JUST = re.compile(
+    r"(?<!\bdo )(?<!\bdoes )(?<!\bdid )\bnot (?:just|only|merely) (?!does |do |did |is |are |was |were |to )([^.;!?\n]{3,80}?),? but (also )?",
+    re.I,
+)
+_GLUE = re.compile(r"(^|[.!?]\s+)([A-Z][a-z]+),(?=[a-z])", re.M)
 
 
 def _case(src, dst):
@@ -35,6 +40,11 @@ def _drop(start_only):
     return sub
 
 
+def _not_just(m):
+    out = m.group(1) + " and " + ("also " if m.group(2) else "")
+    return out[0].upper() + out[1:] if m.group()[0].isupper() else out
+
+
 def soften_dashes(text, per_words=250):
     allowed = max(1, len(_WORDS.findall(text)) // per_words)
     n = 0
@@ -48,8 +58,10 @@ def soften_dashes(text, per_words=250):
 
 
 def apply_rules(text):
+    text = _NOT_JUST.sub(_not_just, text)
     for rx, r in _SWAPS:
         text = rx.sub(lambda m, r=r: _case(m.group(), r), text)
     for rx, start_only in _DROPS:
         text = rx.sub(_drop(start_only), text)
+    text = _GLUE.sub(r"\1\2, ", text)
     return soften_dashes(text)

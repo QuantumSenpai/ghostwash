@@ -150,5 +150,53 @@
   {
     "p": "\\bi hope this helps\\b",
     "w": 2
+  },
+  {
+    "p": "\\bcrucial\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bplays? an? (?:\\w+ )?role in\\b",
+    "w": 1
+  },
+  {
+    "p": "\\b(?:serves|stands) as\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bboasts\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\benhanc(?:e|es|ed|ing)\\b",
+    "w": 1
+  },
+  {
+    "p": "\\binterplay\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bgarner(?:s|ed|ing)?\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bvaluable insights?\\b",
+    "w": 1.5
+  },
+  {
+    "p": "\\bmultifaceted\\b",
+    "w": 2
+  },
+  {
+    "p": "\\benduring\\b",
+    "w": 1
+  },
+  {
+    "p": "\\bhighlighting\\b",
+    "w": 1
+  },
+  {
+    "p": "\\bcutting[- ]edge\\b",
+    "w": 1.5
   }
 ]
