@@ -25,17 +25,21 @@ def process_units(units, skip, rewriter=None, on_progress=None):
     return out
 
 
+def _same(a, b):
+    return a.strip() == b.strip()
+
+
 def _report(old, new):
     before, after = "\n\n".join(old), "\n\n".join(new)
     return {
         "invisible_removed": count_invisible(before),
         "score_before": score(before),
         "score_after": score(after),
-        "units_changed": sum(a != b for a, b in zip(old, new)),
+        "units_changed": sum(not _same(a, b) for a, b in zip(old, new)),
         "changes": [
             {"unit": i, "ops": diff(a, b)}
             for i, (a, b) in enumerate(zip(old, new))
-            if a != b
+            if not _same(a, b)
         ],
     }
 
