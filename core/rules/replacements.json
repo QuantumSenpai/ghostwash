@@ -145,5 +145,93 @@
     "p": "\\boverall,",
     "r": "",
     "start": true
+  },
+  {
+    "p": "\\ban ever-evolving\\b",
+    "r": "a changing"
+  },
+  {
+    "p": "\\bever-evolving\\b",
+    "r": "changing"
+  },
+  {
+    "p": "\\bcutting-edge\\b",
+    "r": "modern"
+  },
+  {
+    "p": "\\ban intricate\\b",
+    "r": "a detailed"
+  },
+  {
+    "p": "\\bintricate\\b",
+    "r": "detailed"
+  },
+  {
+    "p": "\\bholistic\\b",
+    "r": "broad"
+  },
+  {
+    "p": "\\bmeticulously\\b",
+    "r": "carefully"
+  },
+  {
+    "p": "\\bmeticulous\\b",
+    "r": "careful"
+  },
+  {
+    "p": "\\bvibrant\\b",
+    "r": "lively"
+  },
+  {
+    "p": "\\bfostering\\b",
+    "r": "building"
+  },
+  {
+    "p": "\\benhancing\\b",
+    "r": "improving"
+  },
+  {
+    "p": "(?<!syntax )(?<!text )\\bhighlighting\\b",
+    "r": "showing"
+  },
+  {
+    "p": "\\bdelves\\b",
+    "r": "digs"
+  },
+  {
+    "p": "\\bdelved\\b",
+    "r": "dug"
+  },
+  {
+    "p": "\\bdelving\\b",
+    "r": "digging"
+  },
+  {
+    "p": "\\bdelve\\b",
+    "r": "dig"
+  },
+  {
+    "p": "\\bunlocks the full potential of\\b",
+    "r": "gets more out of"
+  },
+  {
+    "p": "\\bunlocked the full potential of\\b",
+    "r": "got more out of"
+  },
+  {
+    "p": "\\bunlocking the full potential of\\b",
+    "r": "getting more out of"
+  },
+  {
+    "p": "\\bunlock the full potential of\\b",
+    "r": "get more out of"
+  },
+  {
+    "p": "\\brich tapestry of\\b",
+    "r": "mix of"
+  },
+  {
+    "p": "\\btapestry of\\b",
+    "r": "mix of"
   }
 ]
