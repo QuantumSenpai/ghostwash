@@ -1,7 +1,7 @@
 [
   {
     "p": "\\bplays an? (?:crucial|key|pivotal|vital|significant|important) role in\\b",
-    "r": "is important in"
+    "r": "is key to"
   },
   {
     "p": "\\ba (?:crucial|pivotal)\\b",
@@ -98,6 +98,51 @@
   },
   {
     "p": "\\b(?:moreover|furthermore|additionally),?",
+    "r": "",
+    "start": true
+  },
+  {
+    "p": "\\bplay an? (?:crucial|key|pivotal|vital|significant|important) role in\\b",
+    "r": "are key to"
+  },
+  {
+    "p": "\\brobust\\b",
+    "r": "solid"
+  },
+  {
+    "p": "\\bleverages\\b",
+    "r": "uses"
+  },
+  {
+    "p": "\\bleveraged\\b",
+    "r": "used"
+  },
+  {
+    "p": "\\bleveraging\\b",
+    "r": "using"
+  },
+  {
+    "p": "\\bto leverage\\b",
+    "r": "to use"
+  },
+  {
+    "p": "\\bunderscores\\b",
+    "r": "stresses"
+  },
+  {
+    "p": "\\bunderscored\\b",
+    "r": "stressed"
+  },
+  {
+    "p": "\\bunderscoring\\b",
+    "r": "stressing"
+  },
+  {
+    "p": "\\bto underscore\\b",
+    "r": "to stress"
+  },
+  {
+    "p": "\\boverall,",
     "r": "",
     "start": true
   }
