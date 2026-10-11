@@ -1,0 +1,4 @@
+Match the voice of the writing sample below: its sentence length, word choice and tone. Never copy its content or facts.
+
+Writing sample:
+{style}

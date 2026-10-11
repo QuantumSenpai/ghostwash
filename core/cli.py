@@ -2,6 +2,7 @@ import argparse
 import json
 
 from .pipeline import run
+from .style import load_style
 
 
 def main():
@@ -9,8 +10,16 @@ def main():
     p.add_argument("input")
     p.add_argument("-o", "--output")
     p.add_argument("--json", action="store_true")
+    p.add_argument("--ml", action="store_true")
+    p.add_argument("--strength", choices=("light", "heavy"), default="light")
+    p.add_argument("--style")
     a = p.parse_args()
-    r = run(a.input, a.output)
+    rewriter = None
+    if a.ml:
+        from .rewrite import make_rewriter
+
+        rewriter = make_rewriter(a.strength, load_style(a.style))
+    r = run(a.input, a.output, rewriter)
     if a.json:
         print(json.dumps(r, ensure_ascii=False, indent=2))
         return
