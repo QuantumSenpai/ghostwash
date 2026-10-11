@@ -60,15 +60,27 @@ def make_rewriter(strength="light", style=None, tries=3, llm=None):
         max_tokens = min(1024, max(128, len(chunk) // 2))
         log = []
 
+        from .detect import detect as _detect
+
+        seen = {f.rule for f in _detect(chunk)}
+        avoid = set()
+
         def candidates():
             for n, temp in enumerate(temps, 1):
-                out = clean_output(state["llm"].generate(system, prot, max_tokens, temp))
+                out = clean_output(state["llm"].generate(
+                    system + ("\n\nDo not use these words or phrases: " + ", ".join(sorted(avoid)) + "." if avoid else ""),
+                    prot,
+                    max_tokens,
+                    temp,
+                ))
                 if "\u2019" not in chunk:
                     out = out.replace("\u2019", "'")
                 why = reason(prot, out, store, lo, hi)
                 log.append(f"try{n}:{why or 'ok'}")
                 if not why:
-                    yield restore(out, store)
+                    cand = restore(out, store)
+                    avoid.update(f.text.lower() for f in _detect(cand) if f.rule not in seen)
+                    yield cand
 
         res = refine(chunk, candidates())
         if os.environ.get("HUMANIZER_DEBUG"):
