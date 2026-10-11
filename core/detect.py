@@ -38,3 +38,7 @@ def score(text, flags=None):
     flags = detect(text) if flags is None else flags
     words = max(len(_WORDS.findall(text)), 1)
     return round(sum(f.weight for f in flags) * 100 / words, 2)
+
+
+def needs_rewrite(text):
+    return any(f.rule != "em-dash" for f in detect(text))
