@@ -15,6 +15,24 @@ from . import config
 
 JOBS = {}
 _QUEUE = queue.Queue()
+WARM = {"state": "idle", "error": None}
+
+
+def warmup():
+    if WARM["state"] in ("idle", "error"):
+        WARM.update(state="warming", error=None)
+        _QUEUE.put("__warmup__")
+    return WARM["state"]
+
+
+def _warm():
+    try:
+        from core.ml.loader import get_llm
+
+        get_llm().generate("Reply with one word.", "Hello", 8, 0.0)
+        WARM["state"] = "ready"
+    except Exception as e:
+        WARM.update(state="error", error=f"{type(e).__name__}: {e}"[:300])
 
 
 @dataclass
@@ -111,7 +129,11 @@ def _execute(job):
 
 def _loop():
     while True:
-        job = JOBS.get(_QUEUE.get())
+        item = _QUEUE.get()
+        if item == "__warmup__":
+            _warm()
+            continue
+        job = JOBS.get(item)
         if job and job.status == "queued":
             _execute(job)
 

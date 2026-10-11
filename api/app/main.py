@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from . import cleanup, config, jobs
-from .routes import download, stream, style
+from .routes import download, health, stream, style
 from .routes import jobs as job_routes
 
 
@@ -24,5 +24,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-for r in (job_routes, stream, download, style):
+for r in (job_routes, stream, download, style, health):
     app.include_router(r.router, prefix="/api")
