@@ -8,17 +8,23 @@ from .detect import detect
 from .ml.guard import clean_output, reason
 from .ml.loader import get_llm
 from .protect import protect, restore
-from .recheck import refine
+from .recheck import refine, weight
 
 _DIR = Path(__file__).parent / "prompts"
 _LIMITS = {"light": (0.6, 1.4), "heavy": (0.5, 1.6)}
 _TEMPS = (0.6, 0.8, 0.9)
+_TARGET = 0.3
+_AVOID_MAX = 12
 _BREAK = re.compile(r"(?<=[.!?])\s+")
 
 
 @cache
 def _prompt(name):
     return (_DIR / name).read_text("utf-8").strip()
+
+
+def _temps(n):
+    return [_TEMPS[min(i, len(_TEMPS) - 1)] for i in range(n)]
 
 
 def _sentences(text):
@@ -47,45 +53,69 @@ def _chunks(text):
     return out
 
 
-def make_rewriter(strength="light", style=None, tries=3, llm=None):
-    lo, hi = _LIMITS["heavy" if strength == "heavy" else "light"]
-    system = _prompt(f"rewrite_{'heavy' if strength == 'heavy' else 'light'}.txt")
+def _flag_texts(text, skip=()):
+    return dict.fromkeys(
+        f.text.lower() for f in detect(text) if f.rule != "em-dash" and f.rule not in skip
+    )
+
+
+def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
+    kind = "heavy" if strength == "heavy" else "light"
+    lo, hi = _LIMITS[kind]
+    system = _prompt(f"rewrite_{kind}.txt")
     if style:
         system += "\n\n" + _prompt("style_match.txt").replace("{style}", style.strip())
-    temps = [_TEMPS[min(i, len(_TEMPS) - 1)] for i in range(tries)]
+    draft_temps, fix_temps = _temps(tries), _temps(repair)
     state = {"llm": llm}
 
     def rewrite_chunk(chunk):
-        prot, store = protect(chunk)
-        max_tokens = min(1024, max(128, len(chunk) // 2))
-        log = []
+        base = {f.rule for f in detect(chunk)}
+        avoid, log, made = {}, [], []
 
-        from .detect import detect as _detect
+        def attempt(src, temp, tag):
+            prot, store = protect(src)
+            prompt = system
+            if avoid:
+                prompt += "\n\nDo not use these words or phrases: " + ", ".join(list(avoid)[-_AVOID_MAX:]) + "."
+            out = clean_output(
+                state["llm"].generate(prompt, prot, min(1024, max(128, len(src) // 2)), temp)
+            )
+            if "’" not in chunk:
+                out = out.replace("’", "'")
+            why = reason(prot, out, store, lo, hi)
+            cand = None if why else restore(out, store)
+            why = why or reason(chunk, cand, [], lo, hi)
+            if why:
+                log.append(f"{tag}:{why}")
+                return None
+            log.append(f"{tag}:ok({weight(cand):.1f})")
+            made.append(cand)
+            avoid.update(_flag_texts(cand, base))
+            return cand
 
-        seen = {f.rule for f in _detect(chunk)}
-        avoid = set()
+        def draft():
+            for n, t in enumerate(draft_temps, 1):
+                c = attempt(chunk, t, f"try{n}")
+                if c is not None:
+                    yield c
 
-        def candidates():
-            for n, temp in enumerate(temps, 1):
-                out = clean_output(state["llm"].generate(
-                    system + ("\n\nDo not use these words or phrases: " + ", ".join(sorted(avoid)) + "." if avoid else ""),
-                    prot,
-                    max_tokens,
-                    temp,
-                ))
-                if "\u2019" not in chunk:
-                    out = out.replace("\u2019", "'")
-                why = reason(prot, out, store, lo, hi)
-                log.append(f"try{n}:{why or 'ok'}")
-                if not why:
-                    cand = restore(out, store)
-                    avoid.update(f.text.lower() for f in _detect(cand) if f.rule not in seen)
-                    yield cand
+        def fix(src):
+            avoid.update(_flag_texts(src))
+            for n, t in enumerate(fix_temps, 1):
+                c = attempt(src, t, f"fix{n}")
+                if c is not None:
+                    yield c
 
-        res = refine(chunk, candidates())
+        best = refine(chunk, draft(), _TARGET)
+        if made and fix_temps and weight(best) > weight(chunk) * _TARGET:
+            best = refine(best, fix(best), _TARGET, chunk)
         if os.environ.get("HUMANIZER_DEBUG"):
-            print(f"[rewrite] {' '.join(log)} -> {'changed' if res != chunk else 'kept'}", file=sys.stderr)
-        return res
+            print(
+                f"[rewrite] {weight(chunk):.1f}->{weight(best):.1f} {' '.join(log)} -> "
+                f"{'changed' if best != chunk else 'kept'}",
+                file=sys.stderr,
+            )
+        return best
 
     def rewrite(text):
         spans = _chunks(text)
