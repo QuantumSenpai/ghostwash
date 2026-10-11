@@ -2,6 +2,7 @@ models/*
 !models/.gitkeep
 data/uploads/*
 data/outputs/*
+data/styles/*
 !data/*/.gitkeep
 .env
 __pycache__/

@@ -6,7 +6,13 @@ from fileio.txt_md import parse, render
 from .clean import clean, count_invisible
 from .detect import needs_rewrite, score
 from .diff import diff
+from .protect import protect, restore
 from .rules.apply import apply_rules
+
+
+def _rules(text):
+    prot, store = protect(text)
+    return restore(apply_rules(prot), store)
 
 
 def process_units(units, skip, rewriter=None, on_progress=None):
@@ -16,7 +22,7 @@ def process_units(units, skip, rewriter=None, on_progress=None):
         if i in skip or not u.strip():
             out.append(u)
         else:
-            t = apply_rules(clean(u))
+            t = _rules(clean(u))
             if rewriter and needs_rewrite(t):
                 t = rewriter(t)
             out.append(t)
