@@ -1,14 +1,7 @@
 import type { NextConfig } from "next";
 
-const isDev = process.env.NODE_ENV !== "production";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-let apiOrigin = "http://localhost:8000";
-try {
-  apiOrigin = new URL(apiUrl).origin;
-} catch {
-  apiOrigin = "http://localhost:8000";
-}
+const isDev = process.env.NODE_ENV === "development";
+const apiOrigin = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const scriptSrc = isDev
   ? "'self' 'unsafe-inline' 'unsafe-eval'"

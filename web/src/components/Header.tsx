@@ -20,25 +20,22 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
-          <Link
-            href="/#how-it-works"
-            className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors"
-          >
+          <Link href="/studio" className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors">
+            Studio
+          </Link>
+          <Link href="/compare" className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors">
+            Compare
+          </Link>
+          <Link href="/style" className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors">
+            Style
+          </Link>
+          <Link href="/#how-it-works" className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors">
             How it works
           </Link>
-          <Link
-            href="/#faq"
-            className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors"
-          >
+          <Link href="/faq" className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors">
             FAQ
           </Link>
-          <Link
-            href="/#privacy"
-            className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)] transition-colors"
-          >
-            Privacy
-          </Link>
-          <Link href="/#studio">
+          <Link href="/studio">
             <Button variant="primary" size="sm">
               Open Studio
             </Button>
@@ -60,30 +57,27 @@ export function Header() {
       {isMenuOpen && (
         <div
           id="mobile-nav"
-          className="md:hidden border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-4 py-4 flex flex-col gap-3"
+          className="md:hidden border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-4 py-4 flex flex-col gap-2"
         >
-          <Link
-            href="/#how-it-works"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]"
-          >
+          <Link href="/studio" onClick={() => setIsMenuOpen(false)} className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]">
+            Studio
+          </Link>
+          <Link href="/compare" onClick={() => setIsMenuOpen(false)} className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]">
+            Compare
+          </Link>
+          <Link href="/style" onClick={() => setIsMenuOpen(false)} className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]">
+            Style
+          </Link>
+          <Link href="/#how-it-works" onClick={() => setIsMenuOpen(false)} className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]">
             How it works
           </Link>
-          <Link
-            href="/#faq"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]"
-          >
+          <Link href="/faq" onClick={() => setIsMenuOpen(false)} className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]">
             FAQ
           </Link>
-          <Link
-            href="/#privacy"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]"
-          >
+          <Link href="/privacy" onClick={() => setIsMenuOpen(false)} className="flex h-11 items-center text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]">
             Privacy
           </Link>
-          <Link href="/#studio" onClick={() => setIsMenuOpen(false)}>
+          <Link href="/studio" onClick={() => setIsMenuOpen(false)} className="mt-2">
             <Button variant="primary" size="md" className="w-full">
               Open Studio
             </Button>
