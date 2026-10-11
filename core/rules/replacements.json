@@ -1,5 +1,13 @@
 [
   {
+    "p": "\\bplays an? (?:crucial|key|pivotal|vital|significant|important) role in\\b",
+    "r": "is important in"
+  },
+  {
+    "p": "\\ba (?:crucial|pivotal)\\b",
+    "r": "an important"
+  },
+  {
     "p": "\\bdelve into\\b",
     "r": "dig into"
   },
@@ -56,18 +64,6 @@
     "r": "proof of"
   },
   {
-    "p": "\\bfurthermore\\b",
-    "r": "also"
-  },
-  {
-    "p": "\\bmoreover\\b",
-    "r": "also"
-  },
-  {
-    "p": "\\badditionally\\b",
-    "r": "also"
-  },
-  {
     "p": "\\bin conclusion\\b",
     "r": "overall"
   },
@@ -84,7 +80,24 @@
     "r": ""
   },
   {
-    "p": "\\bin today['’]s (?:[a-z-]+ )?(?:world|age|landscape|era),?",
+    "p": "\\bin today['’]s (?:[a-z-]+ ){0,3}?(?:world|age|landscape|era),?",
+    "r": "",
+    "start": true
+  },
+  {
+    "p": "\\b(?:crucial|pivotal)\\b",
+    "r": "important"
+  },
+  {
+    "p": "\\b(?:serves|stands) as\\b",
+    "r": "is"
+  },
+  {
+    "p": "\\bboasts\\b",
+    "r": "has"
+  },
+  {
+    "p": "\\b(?:moreover|furthermore|additionally),?",
     "r": "",
     "start": true
   }
