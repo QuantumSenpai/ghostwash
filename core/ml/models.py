@@ -50,3 +50,12 @@ def is_installed(key):
         return False
     repo = "models--" + REGISTRY[key]["repo"].replace("/", "--")
     return (Path(HF_HUB_CACHE) / repo / "snapshots").exists()
+
+
+def validate(key):
+    """Return an error message for an unusable registry key, else None."""
+    if key not in REGISTRY:
+        return "unknown model"
+    if not is_installed(key):
+        return "model not installed"
+    return None

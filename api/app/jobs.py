@@ -6,6 +6,7 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from core.ml.models import resolve
 from core.pipeline import run, run_text
 from core.style import load_style
 from fileio.base import save
@@ -18,15 +19,26 @@ _QUEUE = queue.Queue()
 WARM = {"state": "idle", "error": None}
 
 
-def warmup():
-    if WARM["state"] in ("idle", "error"):
+def warmup(model=None):
+    if WARM["state"] == "warming":
+        return "warming"
+    if WARM["state"] != "ready" or (model and resolve()[0] != model):
         WARM.update(state="warming", error=None)
-        _QUEUE.put("__warmup__")
+        _QUEUE.put(("__warmup__", model))
     return WARM["state"]
 
 
-def _warm():
+def _use_model(key):
+    from core.ml.loader import switch_model
+
+    if resolve()[0] != key:
+        switch_model(key)
+
+
+def _warm(model=None):
     try:
+        if model:
+            _use_model(model)
         from core.ml.loader import get_llm
 
         get_llm().generate("Reply with one word.", "Hello", 8, 0.0)
@@ -52,15 +64,16 @@ class Job:
     error: str | None = None
     finished: float | None = None
     created: float = field(default_factory=time.time)
+    model: str | None = None
 
 
-def create(kind, filename, mode, strength, style, out_format, data=None, text=None):
+def create(kind, filename, mode, strength, style, out_format, data=None, text=None, model=None):
     jid = uuid.uuid4().hex
     src = None
     if data is not None:
         src = config.UPLOADS / f"{jid}{Path(filename).suffix.lower()}"
         src.write_bytes(data)
-    job = Job(jid, kind, filename, mode, strength, style, out_format, src, text)
+    job = Job(jid, kind, filename, mode, strength, style, out_format, src, text, model=model)
     JOBS[jid] = job
     _QUEUE.put(jid)
     return job
@@ -104,6 +117,8 @@ def _execute(job):
         job.progress = min(f, 0.99)
 
     try:
+        if job.mode == "ml" and job.model:
+            _use_model(job.model)
         rw = _rewriter(job)
         if job.kind == "file":
             res = run(job.src, config.OUTPUTS / f"{job.id}{suffix}", rw, tick)
@@ -130,8 +145,8 @@ def _execute(job):
 def _loop():
     while True:
         item = _QUEUE.get()
-        if item == "__warmup__":
-            _warm()
+        if isinstance(item, tuple):
+            _warm(item[1])
             continue
         job = JOBS.get(item)
         if job and job.status == "queued":

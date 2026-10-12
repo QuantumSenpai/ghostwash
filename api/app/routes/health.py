@@ -1,8 +1,8 @@
 import os
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
-from core.ml.models import DEFAULT_KEY, REGISTRY, is_installed, resolve
+from core.ml.models import DEFAULT_KEY, REGISTRY, is_installed, resolve, validate
 
 from .. import jobs
 
@@ -51,5 +51,7 @@ def models():
 
 
 @router.post("/warmup", status_code=202)
-def warmup():
-    return {"status": jobs.warmup()}
+def warmup(model: str | None = None):
+    if model and (err := validate(model)):
+        raise HTTPException(422, err)
+    return {"status": jobs.warmup(model)}

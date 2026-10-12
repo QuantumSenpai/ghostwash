@@ -14,6 +14,7 @@ class JobOut(BaseModel):
     progress: float
     result: dict[str, Any] | None
     error: str | None
+    model: str | None = None
 
 
 class StyleIn(BaseModel):

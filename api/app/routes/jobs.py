@@ -3,6 +3,7 @@ from typing import Literal
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
+from core.ml.models import validate
 from core.style import list_styles
 
 from .. import config, jobs
@@ -24,6 +25,7 @@ async def create_job(
     mode: Literal["rules", "ml"] = Form("rules"),
     strength: Literal["light", "heavy"] = Form("light"),
     style: str | None = Form(None),
+    model: str | None = Form(None),
     out_format: Literal["same", "txt", "docx", "pdf"] = Form("same"),
 ):
     has_file = bool(file and file.filename)
@@ -33,10 +35,13 @@ async def create_job(
     style = style or None
     if style and style not in list_styles():
         raise HTTPException(422, "unknown style")
+    model = (model or None) if mode == "ml" else None
+    if model and (err := validate(model)):
+        raise HTTPException(422, err)
     if has_text:
         if len(text) > config.MAX_TEXT_CHARS:
             raise HTTPException(413, "text too large")
-        job = jobs.create("text", "pasted.txt", mode, strength, style, out_format, text=text)
+        job = jobs.create("text", "pasted.txt", mode, strength, style, out_format, text=text, model=model)
         return _out(job)
     name = Path(file.filename).name
     if Path(name).suffix.lower() not in config.EXTS:
@@ -49,7 +54,7 @@ async def create_job(
             raise HTTPException(413, "file too large")
     if not buf:
         raise HTTPException(422, "empty file")
-    job = jobs.create("file", name, mode, strength, style, out_format, data=bytes(buf))
+    job = jobs.create("file", name, mode, strength, style, out_format, data=bytes(buf), model=model)
     return _out(job)
 
 
