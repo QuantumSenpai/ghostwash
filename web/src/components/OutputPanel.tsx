@@ -7,7 +7,7 @@ import { PhantomMark } from "./ui/PhantomMark";
 import { ProgressBar } from "./ProgressBar";
 import { JobStatusResponse, OutFormat } from "../lib/types";
 import { getDownloadUrl } from "../lib/api";
-import { isNoOpResult } from "../lib/site";
+import { formatModelLabel, isNoOpResult } from "../lib/site";
 
 interface OutputPanelProps {
   job: JobStatusResponse | null;
@@ -97,6 +97,12 @@ export function OutputPanel({
           </span>
         )}
       </div>
+
+      {job.model && (
+        <div className="text-xs font-mono text-[var(--color-text-secondary)]" data-model={job.model}>
+          {job.mode === "ml" ? "Rules + ML" : "Rules"} · {formatModelLabel(job.model)}
+        </div>
+      )}
 
       {isTextJob ? (
         <div className="w-full h-72 rounded-[var(--radius-input)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm text-[var(--color-ink)] leading-relaxed overflow-y-auto whitespace-pre-wrap select-text">

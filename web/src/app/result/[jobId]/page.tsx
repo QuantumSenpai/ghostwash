@@ -9,7 +9,7 @@ import { Spinner } from "../../../components/ui/Spinner";
 import { ScoreCard } from "../../../components/ScoreCard";
 import { FlagList } from "../../../components/FlagList";
 import { getDownloadUrl, getJob, subscribeJobEvents } from "../../../lib/api";
-import { isValidJobId } from "../../../lib/site";
+import { formatModelLabel, isValidJobId } from "../../../lib/site";
 import { JobStatusResponse, OutFormat } from "../../../lib/types";
 
 const DiffViewer = dynamic(
@@ -73,6 +73,11 @@ export default function ResultPage({ params }: { params: Promise<{ jobId: string
         <div>
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">Review what changed</h1>
           <p className="font-mono text-xs text-[var(--color-text-secondary)] mt-1">{job.id}</p>
+          {job.model && (
+            <p className="font-mono text-xs text-[var(--color-text-secondary)] mt-1" data-model={job.model}>
+              {job.mode === "ml" ? "Rules + ML" : "Rules"} · {formatModelLabel(job.model)}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <Link href="/studio"><Button variant="secondary" size="sm">Back to Studio</Button></Link>

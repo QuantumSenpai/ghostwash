@@ -60,3 +60,14 @@ export function isNoOpResult(
   return outText.trim() === input.trim();
 }
 
+export const MODEL_LABELS: Record<string, string> = {
+  qwen7b: "Qwen2.5 7B",
+  qwen3b: "Qwen2.5 3B (faster)",
+  llama3b: "Llama 3.2 3B",
+};
+
+export function formatModelLabel(model?: string | null): string {
+  if (!model) return "";
+  return MODEL_LABELS[model] || model;
+}
+
