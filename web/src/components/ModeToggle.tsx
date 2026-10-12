@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Segmented } from "./ui/Segmented";
-import { Mode, Strength } from "../lib/types";
+import { Select } from "./ui/Select";
+import { Mode, ModelInfo, Strength } from "../lib/types";
 
 interface ModeToggleProps {
   mode: Mode;
@@ -10,6 +11,9 @@ interface ModeToggleProps {
   strength: Strength;
   onStrengthChange: (strength: Strength) => void;
   modelLoaded: boolean;
+  model?: string;
+  onModelChange?: (model: string) => void;
+  models?: ModelInfo[];
   disabled?: boolean;
 }
 
@@ -19,8 +23,14 @@ export function ModeToggle({
   strength,
   onStrengthChange,
   modelLoaded,
+  model = "",
+  onModelChange,
+  models = [],
   disabled = false,
 }: ModeToggleProps) {
+  const defaultModel = models.find((m) => m.default) || models[0];
+  const selectedModel = model || defaultModel?.key || "";
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-4">
@@ -46,6 +56,21 @@ export function ModeToggle({
           />
         )}
       </div>
+
+      {mode === "ml" && models.length > 0 && onModelChange && (
+        <Select
+          id="model-select"
+          label="Model"
+          value={selectedModel}
+          onChange={onModelChange}
+          disabled={disabled}
+          options={models.map((m) => ({
+            value: m.key,
+            label: m.installed ? m.label : `${m.label} (not installed)`,
+            disabled: !m.installed,
+          }))}
+        />
+      )}
 
       {mode === "ml" && !modelLoaded && (
         <p className="text-xs text-[var(--color-warning)] bg-[var(--color-warning-bg)] p-2.5 rounded-[var(--radius-input)] border border-[var(--color-warning)]/30">

@@ -9,14 +9,16 @@ import { ModeToggle } from "../../components/ModeToggle";
 import { StudioControls } from "../../components/StudioControls";
 import { OutputPanel } from "../../components/OutputPanel";
 import { useJobStore } from "../../store/useJobStore";
-import { createJob, getHealth, getJob, getStyles, subscribeJobEvents, triggerWarmup } from "../../lib/api";
+import { createJob, getHealth, getJob, getModels, getStyles, subscribeJobEvents, triggerWarmup } from "../../lib/api";
 import { MAX_CHARACTERS } from "../../lib/site";
+import { ModelInfo } from "../../lib/types";
 
 export default function StudioPage() {
   const store = useJobStore();
   const [inputTab, setInputTab] = useState<string>("paste");
   const [mobileTab, setMobileTab] = useState<string>("original");
   const [stylesList, setStylesList] = useState<string[]>([]);
+  const [models, setModels] = useState<ModelInfo[]>([]);
   const [modelLoaded, setModelLoaded] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
   const unsubRef = useRef<(() => void) | null>(null);
@@ -25,12 +27,20 @@ export default function StudioPage() {
     const ac = new AbortController();
     getHealth(ac.signal).then((h) => setModelLoaded(h.model_loaded)).catch(() => {});
     getStyles(ac.signal).then((s) => setStylesList(s.styles)).catch(() => {});
+    getModels(ac.signal).then((m) => setModels(m)).catch(() => {});
     return () => { ac.abort(); unsubRef.current?.(); };
   }, []);
 
+  const defaultModelKey = models.find((m) => m.default)?.key || "qwen7b";
+  const chosenModelKey = store.model || defaultModelKey;
+  const loadedModelKey = models.find((m) => m.loaded)?.key;
+  const isLoaded = models.length > 0 ? loadedModelKey === chosenModelKey : modelLoaded;
+
   useEffect(() => {
-    if (store.mode === "ml" && !modelLoaded) triggerWarmup().catch(() => {});
-  }, [store.mode, modelLoaded]);
+    if (store.mode === "ml" && !isLoaded) {
+      triggerWarmup(store.model || undefined).catch(() => {});
+    }
+  }, [store.mode, store.model, isLoaded]);
 
   const handleRefine = async () => {
     if (store.isSubmitting) return;
@@ -38,9 +48,10 @@ export default function StudioPage() {
     store.setIsSubmitting(true);
     setProgress(0);
     try {
+      const modelParam = store.mode === "ml" && store.model ? store.model : undefined;
       const payload = inputTab === "paste"
-        ? { text: store.inputText, mode: store.mode, strength: store.strength, style: store.style }
-        : { file: store.selectedFile!, mode: store.mode, strength: store.strength, style: store.style, out_format: store.outFormat };
+        ? { text: store.inputText, mode: store.mode, strength: store.strength, style: store.style, model: modelParam }
+        : { file: store.selectedFile!, mode: store.mode, strength: store.strength, style: store.style, out_format: store.outFormat, model: modelParam };
       const job = await createJob(payload);
       store.setCurrentJobId(job.id);
       unsubRef.current?.();
@@ -96,7 +107,17 @@ export default function StudioPage() {
           <Panel padding="md" className="flex flex-col gap-4 shadow-xs">
             <Tabs tabs={[{ id: "paste", label: "Paste text" }, { id: "file", label: "Upload file" }]} activeTab={inputTab} onChange={(t) => { setInputTab(t); t === "paste" ? store.setSelectedFile(null) : store.setInputText(""); }} />
             {inputTab === "paste" ? <TextInput value={store.inputText} onChange={store.setInputText} disabled={store.isSubmitting} /> : <FileDropzone selectedFile={store.selectedFile} onSelectFile={store.setSelectedFile} disabled={store.isSubmitting} />}
-            <ModeToggle mode={store.mode} onModeChange={store.setMode} strength={store.strength} onStrengthChange={store.setStrength} modelLoaded={modelLoaded} disabled={store.isSubmitting} />
+            <ModeToggle
+              mode={store.mode}
+              onModeChange={store.setMode}
+              strength={store.strength}
+              onStrengthChange={store.setStrength}
+              model={store.model}
+              onModelChange={store.setModel}
+              models={models}
+              modelLoaded={isLoaded}
+              disabled={store.isSubmitting}
+            />
             <StudioControls styles={stylesList} selectedStyle={store.style} onStyleChange={store.setStyle} outFormat={store.outFormat} onOutFormatChange={store.setOutFormat} isFileJob={inputTab === "file"} canSubmit={canSubmit} isSubmitting={store.isSubmitting} onSubmit={handleRefine} />
           </Panel>
         </div>
