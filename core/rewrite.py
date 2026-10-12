@@ -17,7 +17,7 @@ _TEMPS = (0.6, 0.8, 0.9)
 _TARGET = 0.3
 _LIST_MAX = 12
 _BREAK = re.compile(r"(?<=[.!?])\s+")
-_GROUP = 600
+_GROUP = 300
 _MIN_WORDS = 4
 
 

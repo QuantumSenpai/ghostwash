@@ -26,7 +26,7 @@ def main():
         return
     print(f"saved: {r['out']}")
     print(f"invisible chars removed: {r['invisible_removed']}")
-    print(f"AI-ism score: {r['score_before']} -> {r['score_after']}")
+    print(f"style flags: {r['score_before']} -> {r['score_after']}")
     print(f"paragraphs changed: {r['units_changed']}")
 
 

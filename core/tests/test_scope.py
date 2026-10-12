@@ -47,6 +47,19 @@ def test_default_scope_unchanged():
     assert make_rewriter(llm=Fake([NEW])).scope == "flagged"
 
 
+def test_hyphenated_compound_may_change():
+    src = "AI-powered tools reach Mumbai and Kolkata fast."
+    out = "AI tools reach Mumbai and Kolkata fast."
+    r, fake = run([out], src)
+    assert r["text"].strip() == out and fake.calls == 1
+
+
+def test_proper_noun_loss_still_rejected():
+    src = "AI-powered tools reach Mumbai and Kolkata fast."
+    r, fake = run(["AI tools reach the city fast."], src)
+    assert r["text"].strip() == src and fake.calls == 3
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for t in tests:

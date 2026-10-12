@@ -15,7 +15,7 @@ _LEAD = re.compile(
 )
 _MARK = re.compile(r"⟦\d+⟧")
 _NUM = re.compile(r"\d+(?:[.,]\d+)*")
-_TOK = re.compile(r"[A-Za-z][\w'’-]*|[.!?\n]|⟦\d+⟧")
+_TOK = re.compile(r"[A-Za-z][\w'’]*|[.!?\n]|⟦\d+⟧")
 _STOPS = {".", "!", "?", "\n"}
 
 
