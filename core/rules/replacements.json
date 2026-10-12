@@ -233,5 +233,56 @@
   {
     "p": "\\btapestry of\\b",
     "r": "mix of"
+  },
+  {
+    "p": "\\bi hope (?:this )?(?:email |message |note )?finds you well[.!]?",
+    "r": "",
+    "start": true
+  },
+  {
+    "p": "\\bmoving forward,?",
+    "r": "",
+    "start": true
+  },
+  {
+    "p": "\\bultimately,?",
+    "r": "",
+    "start": true
+  },
+  {
+    "p": "\\bdo not hesitate to\\b",
+    "r": "feel free to"
+  },
+  {
+    "p": "\\btirelessly\\b",
+    "r": "hard"
+  },
+  {
+    "p": "\\bempowers you to\\b",
+    "r": "lets you"
+  },
+  {
+    "p": "\\bempower you to\\b",
+    "r": "let you"
+  },
+  {
+    "p": "\\belevates\\b",
+    "r": "raises"
+  },
+  {
+    "p": "\\belevating\\b",
+    "r": "raising"
+  },
+  {
+    "p": "\\belevate\\b",
+    "r": "raise"
+  },
+  {
+    "p": "\\bstreamlines\\b",
+    "r": "simplifies"
+  },
+  {
+    "p": "\\bstreamline\\b",
+    "r": "simplify"
   }
 ]
