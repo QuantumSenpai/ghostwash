@@ -3,13 +3,15 @@
 import React from "react";
 import { Segmented } from "./ui/Segmented";
 import { Select } from "./ui/Select";
-import { Mode, ModelInfo, Strength } from "../lib/types";
+import { Mode, ModelInfo, Scope, Strength } from "../lib/types";
 
 interface ModeToggleProps {
   mode: Mode;
   onModeChange: (mode: Mode) => void;
   strength: Strength;
   onStrengthChange: (strength: Strength) => void;
+  scope?: Scope;
+  onScopeChange?: (scope: Scope) => void;
   modelLoaded: boolean;
   model?: string;
   onModelChange?: (model: string) => void;
@@ -22,6 +24,8 @@ export function ModeToggle({
   onModeChange,
   strength,
   onStrengthChange,
+  scope = "flagged",
+  onScopeChange,
   modelLoaded,
   model = "",
   onModelChange,
@@ -70,6 +74,25 @@ export function ModeToggle({
             disabled: !m.installed,
           }))}
         />
+      )}
+
+      {mode === "ml" && onScopeChange && (
+        <div className="flex flex-col gap-1.5">
+          <Segmented<Scope>
+            label="Scope"
+            value={scope}
+            onChange={onScopeChange}
+            options={[
+              { label: "Flagged only", value: "flagged" },
+              { label: "Full rewrite", value: "all" },
+            ]}
+          />
+          {scope === "all" && (
+            <p className="text-xs text-[var(--color-text-secondary)]">
+              Rewrites every paragraph for clarity. Check the result against your original: meaning, names and numbers must still be right.
+            </p>
+          )}
+        </div>
       )}
 
       {mode === "ml" && !modelLoaded && (

@@ -17,6 +17,8 @@ _TEMPS = (0.6, 0.8, 0.9)
 _TARGET = 0.3
 _LIST_MAX = 12
 _BREAK = re.compile(r"(?<=[.!?])\s+")
+_GROUP = 600
+_MIN_WORDS = 4
 
 
 @cache
@@ -54,6 +56,21 @@ def _chunks(text):
     return out
 
 
+def _groups(text):
+    out, cur = [], None
+    for s, e in _sentences(text):
+        if cur is None:
+            cur = [s, e]
+        elif e - cur[0] <= _GROUP:
+            cur[1] = e
+        else:
+            out.append(tuple(cur))
+            cur = [s, e]
+    if cur:
+        out.append(tuple(cur))
+    return [(s, e) for s, e in out if len(text[s:e].split()) >= _MIN_WORDS]
+
+
 def _flag_texts(text, skip=()):
     return dict.fromkeys(
         f.text.lower() for f in detect(text) if f.rule != "em-dash" and f.rule not in skip
@@ -64,10 +81,11 @@ def _listed(words):
     return ", ".join(list(words)[-_LIST_MAX:])
 
 
-def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
+def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2, scope="flagged"):
     kind = "heavy" if strength == "heavy" else "light"
+    everything = scope == "all"
     lo, hi = _LIMITS[kind]
-    system = _prompt(f"rewrite_{kind}.txt")
+    system = _prompt(f"rewrite_{'all_' if everything else ''}{kind}.txt")
     if style:
         system += "\n\n" + _prompt("style_match.txt").replace("{style}", style.strip())
     draft_temps, fix_temps = _temps(tries), _temps(repair)
@@ -111,7 +129,10 @@ def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
                 if c is not None:
                     yield c
 
-        best = refine(chunk, draft(), _TARGET)
+        if everything:
+            best = next((c for c in draft() if c != chunk), chunk)
+        else:
+            best = refine(chunk, draft(), _TARGET)
         if made and fix_temps and weight(best) > weight(chunk) * _TARGET:
             best = refine(best, fix(best), _TARGET, chunk)
         if os.environ.get("HUMANIZER_DEBUG"):
@@ -123,7 +144,7 @@ def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
         return best
 
     def rewrite(text):
-        spans = _chunks(text)
+        spans = _groups(text) if everything else _chunks(text)
         if not spans:
             return text
         if state["llm"] is None:
@@ -135,4 +156,5 @@ def make_rewriter(strength="light", style=None, tries=3, llm=None, repair=2):
         out.append(text[pos:])
         return "".join(out)
 
+    rewrite.scope = scope
     return rewrite

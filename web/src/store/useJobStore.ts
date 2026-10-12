@@ -3,6 +3,7 @@ import {
   JobStatusResponse,
   Mode,
   OutFormat,
+  Scope,
   Strength,
   ToastMessage,
 } from "../lib/types";
@@ -12,6 +13,7 @@ interface JobState {
   selectedFile: File | null;
   mode: Mode;
   strength: Strength;
+  scope: Scope;
   style: string;
   outFormat: OutFormat;
   currentJobId: string | null;
@@ -25,6 +27,7 @@ interface JobState {
   setSelectedFile: (file: File | null) => void;
   setMode: (mode: Mode) => void;
   setStrength: (strength: Strength) => void;
+  setScope: (scope: Scope) => void;
   setStyle: (style: string) => void;
   setOutFormat: (outFormat: OutFormat) => void;
   setCurrentJobId: (id: string | null) => void;
@@ -40,6 +43,7 @@ export const useJobStore = create<JobState>((set) => ({
   selectedFile: null,
   mode: "rules",
   strength: "light",
+  scope: "flagged",
   style: "",
   model: "",
   outFormat: "same",
@@ -53,6 +57,7 @@ export const useJobStore = create<JobState>((set) => ({
   setSelectedFile: (selectedFile) => set({ selectedFile, inputText: "" }),
   setMode: (mode) => set({ mode }),
   setStrength: (strength) => set({ strength }),
+  setScope: (scope) => set({ scope }),
   setStyle: (style) => set({ style }),
   setOutFormat: (outFormat) => set({ outFormat }),
   setCurrentJobId: (currentJobId) => set({ currentJobId }),

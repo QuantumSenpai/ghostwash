@@ -65,15 +65,16 @@ class Job:
     finished: float | None = None
     created: float = field(default_factory=time.time)
     model: str | None = None
+    scope: str = "flagged"
 
 
-def create(kind, filename, mode, strength, style, out_format, data=None, text=None, model=None):
+def create(kind, filename, mode, strength, style, out_format, data=None, text=None, model=None, scope="flagged"):
     jid = uuid.uuid4().hex
     src = None
     if data is not None:
         src = config.UPLOADS / f"{jid}{Path(filename).suffix.lower()}"
         src.write_bytes(data)
-    job = Job(jid, kind, filename, mode, strength, style, out_format, src, text, model=model)
+    job = Job(jid, kind, filename, mode, strength, style, out_format, src, text, model=model, scope=scope)
     JOBS[jid] = job
     _QUEUE.put(jid)
     return job
@@ -106,7 +107,7 @@ def _rewriter(job):
     if job.style and re.fullmatch(r"[A-Za-z0-9_-]+", job.style):
         sp = config.STYLES / f"{job.style}.txt"
         style = load_style(str(sp)) if sp.is_file() else None
-    return make_rewriter(strength=job.strength, style=style)
+    return make_rewriter(strength=job.strength, style=style, scope=job.scope)
 
 
 def _execute(job):

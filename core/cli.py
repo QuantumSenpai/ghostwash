@@ -13,12 +13,13 @@ def main():
     p.add_argument("--ml", action="store_true")
     p.add_argument("--strength", choices=("light", "heavy"), default="light")
     p.add_argument("--style")
+    p.add_argument("--scope", choices=("flagged", "all"), default="flagged")
     a = p.parse_args()
     rewriter = None
     if a.ml:
         from .rewrite import make_rewriter
 
-        rewriter = make_rewriter(a.strength, load_style(a.style))
+        rewriter = make_rewriter(a.strength, load_style(a.style), scope=a.scope)
     r = run(a.input, a.output, rewriter)
     if a.json:
         print(json.dumps(r, ensure_ascii=False, indent=2))

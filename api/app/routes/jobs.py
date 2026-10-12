@@ -26,6 +26,7 @@ async def create_job(
     strength: Literal["light", "heavy"] = Form("light"),
     style: str | None = Form(None),
     model: str | None = Form(None),
+    scope: Literal["flagged", "all"] = Form("flagged"),
     out_format: Literal["same", "txt", "docx", "pdf"] = Form("same"),
 ):
     has_file = bool(file and file.filename)
@@ -41,7 +42,7 @@ async def create_job(
     if has_text:
         if len(text) > config.MAX_TEXT_CHARS:
             raise HTTPException(413, "text too large")
-        job = jobs.create("text", "pasted.txt", mode, strength, style, out_format, text=text, model=model)
+        job = jobs.create("text", "pasted.txt", mode, strength, style, out_format, text=text, model=model, scope=scope)
         return _out(job)
     name = Path(file.filename).name
     if Path(name).suffix.lower() not in config.EXTS:
@@ -54,7 +55,7 @@ async def create_job(
             raise HTTPException(413, "file too large")
     if not buf:
         raise HTTPException(422, "empty file")
-    job = jobs.create("file", name, mode, strength, style, out_format, data=bytes(buf), model=model)
+    job = jobs.create("file", name, mode, strength, style, out_format, data=bytes(buf), model=model, scope=scope)
     return _out(job)
 
 

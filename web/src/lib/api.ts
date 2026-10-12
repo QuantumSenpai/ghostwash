@@ -5,6 +5,7 @@ import {
   ModelInfo,
   Mode,
   OutFormat,
+  Scope,
   SSEEvent,
   StylesResponse,
   Strength,
@@ -44,6 +45,7 @@ export async function createJob(params: {
   text?: string;
   mode: Mode;
   strength: Strength;
+  scope?: Scope;
   style?: string;
   model?: string;
   out_format?: OutFormat;
@@ -56,6 +58,7 @@ export async function createJob(params: {
   }
   formData.append("mode", params.mode);
   formData.append("strength", params.strength);
+  if (params.scope) formData.append("scope", params.scope);
   if (params.style) formData.append("style", params.style);
   if (params.model) formData.append("model", params.model);
   if (params.out_format) formData.append("out_format", params.out_format);

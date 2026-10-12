@@ -23,7 +23,7 @@ def process_units(units, skip, rewriter=None, on_progress=None):
             out.append(u)
         else:
             t = _rules(clean(u))
-            if rewriter and needs_rewrite(t):
+            if rewriter and (getattr(rewriter, "scope", "flagged") == "all" or needs_rewrite(t)):
                 t = rewriter(t)
             out.append(t)
         if on_progress:

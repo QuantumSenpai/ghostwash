@@ -1,5 +1,6 @@
 export type Mode = "rules" | "ml";
 export type Strength = "light" | "heavy";
+export type Scope = "flagged" | "all";
 export type JobKind = "file" | "text";
 export type JobStatus = "queued" | "running" | "done" | "error";
 export type OutFormat = "same" | "txt" | "docx" | "pdf";

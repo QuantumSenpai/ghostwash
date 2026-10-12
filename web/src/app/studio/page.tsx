@@ -50,8 +50,8 @@ export default function StudioPage() {
     try {
       const modelParam = store.mode === "ml" && store.model ? store.model : undefined;
       const payload = inputTab === "paste"
-        ? { text: store.inputText, mode: store.mode, strength: store.strength, style: store.style, model: modelParam }
-        : { file: store.selectedFile!, mode: store.mode, strength: store.strength, style: store.style, out_format: store.outFormat, model: modelParam };
+        ? { text: store.inputText, mode: store.mode, strength: store.strength, scope: store.scope, style: store.style, model: modelParam }
+        : { file: store.selectedFile!, mode: store.mode, strength: store.strength, scope: store.scope, style: store.style, out_format: store.outFormat, model: modelParam };
       const job = await createJob(payload);
       store.setCurrentJobId(job.id);
       unsubRef.current?.();
@@ -114,6 +114,8 @@ export default function StudioPage() {
               onModeChange={store.setMode}
               strength={store.strength}
               onStrengthChange={store.setStrength}
+              scope={store.scope}
+              onScopeChange={store.setScope}
               model={store.model}
               onModelChange={store.setModel}
               models={models}

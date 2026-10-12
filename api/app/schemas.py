@@ -15,6 +15,7 @@ class JobOut(BaseModel):
     result: dict[str, Any] | None
     error: str | None
     model: str | None = None
+    scope: Literal["flagged", "all"] = "flagged"
 
 
 class StyleIn(BaseModel):
