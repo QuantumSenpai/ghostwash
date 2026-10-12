@@ -84,8 +84,10 @@ export default function StudioPage() {
         });
       });
     } catch (err: unknown) {
+      store.setActiveJob(null);
       store.setError(err instanceof Error ? err.message : "Submission failed");
       store.setIsSubmitting(false);
+      setMobileTab("refined");
     }
   };
 
