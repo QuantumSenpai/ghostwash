@@ -2,6 +2,7 @@ import {
   HealthResponse,
   JobOut,
   JobStatusResponse,
+  ModelInfo,
   Mode,
   OutFormat,
   SSEEvent,
@@ -13,14 +14,29 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    if (res.status === 413) throw new Error("The uploaded content exceeds the size limit.");
-    if (res.status === 415) throw new Error("Unsupported file format.");
-    if (res.status === 422) throw new Error("Invalid input or parameters.");
-    if (res.status === 404) throw new Error("Requested resource was not found.");
-    const body = await res.text().catch(() => "");
-    throw new Error(body || `Request failed with status ${res.status}`);
+    let detail = "";
+    try {
+      const data = await res.json();
+      if (typeof data?.detail === "string") {
+        detail = data.detail;
+      } else if (Array.isArray(data?.detail) && data.detail[0]?.msg) {
+        detail = data.detail[0].msg;
+      }
+    } catch {
+      detail = await res.text().catch(() => "");
+    }
+    if (res.status === 413) throw new Error(detail || "The uploaded content exceeds the size limit.");
+    if (res.status === 415) throw new Error(detail || "Unsupported file format.");
+    if (res.status === 422) throw new Error(detail || "Invalid input or parameters.");
+    if (res.status === 404) throw new Error(detail || "Requested resource was not found.");
+    throw new Error(detail || `Request failed with status ${res.status}`);
   }
   return res.json() as Promise<T>;
+}
+
+export async function getModels(signal?: AbortSignal): Promise<ModelInfo[]> {
+  const res = await fetch(`${BASE_URL}/api/models`, { signal });
+  return handleResponse<ModelInfo[]>(res);
 }
 
 export async function createJob(params: {
@@ -29,6 +45,7 @@ export async function createJob(params: {
   mode: Mode;
   strength: Strength;
   style?: string;
+  model?: string;
   out_format?: OutFormat;
 }, signal?: AbortSignal): Promise<JobOut> {
   const formData = new FormData();
@@ -40,6 +57,7 @@ export async function createJob(params: {
   formData.append("mode", params.mode);
   formData.append("strength", params.strength);
   if (params.style) formData.append("style", params.style);
+  if (params.model) formData.append("model", params.model);
   if (params.out_format) formData.append("out_format", params.out_format);
 
   const res = await fetch(`${BASE_URL}/api/jobs`, {
@@ -109,7 +127,10 @@ export async function getHealth(signal?: AbortSignal): Promise<HealthResponse> {
   return handleResponse<HealthResponse>(res);
 }
 
-export async function triggerWarmup(signal?: AbortSignal): Promise<{ status: string }> {
-  const res = await fetch(`${BASE_URL}/api/warmup`, { method: "POST", signal });
+export async function triggerWarmup(model?: string, signal?: AbortSignal): Promise<{ status: string }> {
+  const url = model
+    ? `${BASE_URL}/api/warmup?model=${encodeURIComponent(model)}`
+    : `${BASE_URL}/api/warmup`;
+  const res = await fetch(url, { method: "POST", signal });
   return handleResponse<{ status: string }>(res);
 }

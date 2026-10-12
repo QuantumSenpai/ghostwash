@@ -43,6 +43,14 @@ export type JobOut = {
   id: string;
 };
 
+export type ModelInfo = {
+  key: string;
+  label: string;
+  installed: boolean;
+  loaded: boolean;
+  default: boolean;
+};
+
 export type JobStatusResponse = {
   id: string;
   status: JobStatus;
@@ -52,6 +60,7 @@ export type JobStatusResponse = {
   progress: number;
   result: JobResult | null;
   error: string | null;
+  model?: string | null;
 };
 
 export type SSEEvent = {
@@ -66,6 +75,7 @@ export type HealthResponse = {
   status: string;
   backend: string;
   model: string;
+  model_key?: string | null;
   model_loaded: boolean;
   warmup: WarmupState;
   warmup_error: string | null;
