@@ -7,12 +7,14 @@ import { PhantomMark } from "./ui/PhantomMark";
 import { ProgressBar } from "./ProgressBar";
 import { JobStatusResponse, OutFormat } from "../lib/types";
 import { getDownloadUrl } from "../lib/api";
+import { isNoOpResult } from "../lib/site";
 
 interface OutputPanelProps {
   job: JobStatusResponse | null;
   isRunning: boolean;
   progress: number;
   error: string | null;
+  inputText?: string;
   onRetry: () => void;
 }
 
@@ -21,6 +23,7 @@ export function OutputPanel({
   isRunning,
   progress,
   error,
+  inputText,
   onRetry,
 }: OutputPanelProps) {
   const [copied, setCopied] = useState(false);
@@ -42,14 +45,15 @@ export function OutputPanel({
     );
   }
 
-  if (error) {
+  const displayError = error || (job?.status === "error" ? (job.error || "Processing failed") : null);
+  if (displayError) {
     return (
       <div className="flex flex-col items-center justify-center p-8 h-80 text-center gap-3">
         <PhantomMark size={28} className="text-[var(--color-error)]" />
         <p className="text-sm font-medium text-[var(--color-ink)]">
           We couldn&apos;t refine this text. Your original draft is still here, try again.
         </p>
-        <p className="text-xs text-[var(--color-text-secondary)] font-mono max-w-md">{error}</p>
+        <p className="text-xs text-[var(--color-text-secondary)] font-mono max-w-md">{displayError}</p>
         <Button size="sm" variant="secondary" onClick={onRetry} className="mt-2">
           Retry
         </Button>
@@ -71,12 +75,21 @@ export function OutputPanel({
   const isTextJob = job.kind === "text" && job.result?.text;
   const refinedText = job.result?.text || job.result?.out || "";
   const wordCount = refinedText.trim() ? refinedText.trim().split(/\s+/).length : 0;
+  const noOp = isNoOpResult(job, inputText);
+
+  const statusNotice = noOp
+    ? job.mode === "rules"
+      ? "No stock phrases were found, so nothing was changed. Try Rules + ML for stronger rewrites, or edit the text yourself."
+      : "No stock phrases were found, so nothing was changed. You can edit the text yourself."
+    : isTextJob
+    ? "Your refined draft is ready."
+    : "Your refined file is ready.";
 
   return (
     <div className="flex flex-col gap-3 h-full">
       <div className="flex items-center justify-between text-xs pb-2 border-b border-[var(--color-border)]">
-        <span className="font-mono text-[var(--color-success)] font-medium">
-          {isTextJob ? "Your refined draft is ready." : "Your refined file is ready."}
+        <span className={`font-mono font-medium ${noOp ? "text-[var(--color-text-secondary)]" : "text-[var(--color-success)]"}`}>
+          {statusNotice}
         </span>
         {isTextJob && (
           <span className="font-mono text-[var(--color-text-secondary)]">
@@ -122,7 +135,7 @@ export function OutputPanel({
 
         <Link href={`/result/${job.id}`}>
           <Button size="sm" variant="ghost" className="text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]">
-            Review what changed →
+            {noOp ? "See the check results →" : "Review what changed →"}
           </Button>
         </Link>
       </div>

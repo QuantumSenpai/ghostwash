@@ -47,7 +47,7 @@ export function ModeToggle({
         )}
       </div>
 
-      {mode === "ml" && !modelLoaded && !disabled && (
+      {mode === "ml" && !modelLoaded && (
         <p className="text-xs text-[var(--color-warning)] bg-[var(--color-warning-bg)] p-2.5 rounded-[var(--radius-input)] border border-[var(--color-warning)]/30">
           The model loads on first use and can take about 30 seconds.
         </p>

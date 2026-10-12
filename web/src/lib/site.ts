@@ -1,3 +1,5 @@
+import type { JobStatusResponse } from "./types";
+
 export const OPERATOR_NAME = "Ghostwash Project";
 export const CONTACT_EMAIL = "hello@ghostwash.local";
 export const LAST_UPDATED = "October 2026";
@@ -42,3 +44,19 @@ export function isValidFile(file: File): { valid: boolean; error?: string } {
   }
   return { valid: true };
 }
+
+export function isNoOpResult(
+  job: JobStatusResponse | null,
+  inputText?: string
+): boolean {
+  if (!job || job.status !== "done" || job.kind !== "text" || !job.result) {
+    return false;
+  }
+  if (job.result.units_changed !== 0) {
+    return false;
+  }
+  const outText = job.result.text || job.result.out || "";
+  const input = inputText || "";
+  return outText.trim() === input.trim();
+}
+

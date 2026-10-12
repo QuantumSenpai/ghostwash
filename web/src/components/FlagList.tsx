@@ -27,7 +27,7 @@ export function FlagList({ flags }: FlagListProps) {
             BEFORE ({beforeFlags.length})
           </span>
           {beforeFlags.length === 0 ? (
-            <p className="text-[var(--color-text-secondary)] italic">No phrase flags detected.</p>
+            <p className="text-[var(--color-text-secondary)] italic">No flagged phrases.</p>
           ) : (
             <ul className="flex flex-col gap-1.5 max-h-48 overflow-y-auto">
               {beforeFlags.map((item, idx) => (
@@ -47,7 +47,9 @@ export function FlagList({ flags }: FlagListProps) {
             AFTER ({afterFlags.length})
           </span>
           {afterFlags.length === 0 ? (
-            <p className="text-[var(--color-success)]">All identified phrase flags resolved.</p>
+            <p className={beforeFlags.length === 0 ? "text-[var(--color-text-secondary)] italic" : "text-[var(--color-success)]"}>
+              {beforeFlags.length === 0 ? "No flagged phrases." : "All identified phrase flags resolved."}
+            </p>
           ) : (
             <ul className="flex flex-col gap-1.5 max-h-48 overflow-y-auto">
               {afterFlags.map((item, idx) => (

@@ -48,7 +48,9 @@ export default function StudioPage() {
         setProgress(ev.progress);
         if (ev.status === "done") {
           unsubRef.current?.();
-          getJob(job.id).then((res) => { store.setActiveJob(res); store.setIsSubmitting(false); setMobileTab("refined"); });
+          getJob(job.id)
+            .then((res) => { store.setActiveJob(res); store.setIsSubmitting(false); setMobileTab("refined"); })
+            .catch((err: unknown) => { store.setError(err instanceof Error ? err.message : "Could not load the result"); store.setIsSubmitting(false); });
         } else if (ev.status === "error") {
           unsubRef.current?.();
           store.setError(ev.error || "Processing failed");
@@ -56,8 +58,19 @@ export default function StudioPage() {
         }
       }, () => {
         getJob(job.id).then((res) => {
-          if (res.status === "done" || res.status === "error") { store.setActiveJob(res); store.setIsSubmitting(false); }
-        }).catch(() => store.setIsSubmitting(false));
+          if (res.status === "done") {
+            store.setActiveJob(res);
+            store.setIsSubmitting(false);
+            setMobileTab("refined");
+          } else if (res.status === "error") {
+            store.setActiveJob(res);
+            store.setError(res.error || "Processing failed");
+            store.setIsSubmitting(false);
+          }
+        }).catch((err: unknown) => {
+          store.setError(err instanceof Error ? err.message : "Processing failed");
+          store.setIsSubmitting(false);
+        });
       });
     } catch (err: unknown) {
       store.setError(err instanceof Error ? err.message : "Submission failed");
@@ -89,7 +102,14 @@ export default function StudioPage() {
         </div>
         <div className={`flex flex-col gap-4 ${mobileTab === "original" ? "hidden md:flex" : "flex"}`}>
           <Panel padding="md" className="flex flex-col min-h-[500px] shadow-xs justify-between">
-            <OutputPanel job={store.activeJob} isRunning={store.isSubmitting} progress={progress} error={store.error} onRetry={handleRefine} />
+            <OutputPanel
+              job={store.activeJob}
+              isRunning={store.isSubmitting}
+              progress={progress}
+              error={store.error}
+              inputText={inputTab === "paste" ? store.inputText : undefined}
+              onRetry={handleRefine}
+            />
           </Panel>
         </div>
       </div>

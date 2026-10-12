@@ -77,8 +77,13 @@ export default function ComparePage() {
           {rulesJob?.result ? (
             <div className="flex flex-col gap-4">
               <ScoreCard result={rulesJob.result} />
+              {rulesJob.result.units_changed === 0 && (
+                <p className="text-xs text-[var(--color-text-secondary)] italic">
+                  No stock phrases found; text unchanged.
+                </p>
+              )}
               <div className="p-3 rounded-[var(--radius-input)] bg-[var(--color-surface-muted)] text-xs leading-relaxed max-h-64 overflow-y-auto whitespace-pre-wrap">
-                {rulesJob.result.out}
+                {rulesJob.result.text || rulesJob.result.out}
               </div>
             </div>
           ) : (
@@ -93,8 +98,13 @@ export default function ComparePage() {
           ) : mlJob?.result ? (
             <div className="flex flex-col gap-4">
               <ScoreCard result={mlJob.result} />
+              {mlJob.result.units_changed === 0 && (
+                <p className="text-xs text-[var(--color-text-secondary)] italic">
+                  No stock phrases found; text unchanged.
+                </p>
+              )}
               <div className="p-3 rounded-[var(--radius-input)] bg-[var(--color-surface-muted)] text-xs leading-relaxed max-h-64 overflow-y-auto whitespace-pre-wrap">
-                {mlJob.result.out}
+                {mlJob.result.text || mlJob.result.out}
               </div>
             </div>
           ) : (
