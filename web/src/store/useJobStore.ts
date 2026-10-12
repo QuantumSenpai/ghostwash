@@ -19,6 +19,8 @@ interface JobState {
   activeJob: JobStatusResponse | null;
   error: string | null;
   toast: ToastMessage | null;
+  model: string;
+  setModel: (model: string) => void;
   setInputText: (text: string) => void;
   setSelectedFile: (file: File | null) => void;
   setMode: (mode: Mode) => void;
@@ -39,12 +41,14 @@ export const useJobStore = create<JobState>((set) => ({
   mode: "rules",
   strength: "light",
   style: "",
+  model: "",
   outFormat: "same",
   currentJobId: null,
   isSubmitting: false,
   activeJob: null,
   error: null,
   toast: null,
+  setModel: (model) => set({ model }),
   setInputText: (inputText) => set({ inputText, selectedFile: null }),
   setSelectedFile: (selectedFile) => set({ selectedFile, inputText: "" }),
   setMode: (mode) => set({ mode }),
